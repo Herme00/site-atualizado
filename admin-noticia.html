@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <title>Admin I.T.P.S</title>
+    
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logoRD">
+            <div class="logo">
+                <a href="index.html"><img class="logo1" src="img/download.jfif" alt=""></a><h1>Dois Talentos</h1></div>
+                <i class="fa-solid fa-bars" id="openmenu" onclick="openmenu()"></i>
+                
+                
+                
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="admin.html">Início</a></li>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="portofolio.html">Eventos</a></li>
+                    <li><a href="biblioteca.php">Biblioteca</a></li>
+                    <li><a href="https://herme07.github.io/hermemarketing.ao/contato.html">Ajuda</a></li>
+                    <a href="login-portal.html" class="btn-entrar">Portal</a>
+                    <div>
+                     <i class="fa-solid fa-circle-xmark" id="close"  onclick="closemenu()" ></i>
+                    </div>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+   
+
+    <section id="noticias">
+        <h2> Publicar Notícias</h2>
+        <form id="form-noticia">
+            <input type="text" id="titulo-noticia" placeholder="Título da Notícia" required>
+            <textarea id="conteudo-noticia" placeholder="Conteúdo da Notícia" required></textarea>
+            <button type="submit">Publicar Notícia</button>
+        </form>
+        <div id="lista-noticias" class="noticias-grid"></div>
+    </section>
+    
+
+<script>
+
+let ul = document.querySelector(`ul`)
+function openmenu(){
+ul.classList.add(`open`)
+}
+function closemenu(){
+ul.classList.remove(`open`)
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const formNoticia = document.getElementById("form-noticia");
+    const listaNoticias = document.getElementById("lista-noticias");
+
+    const carregarNoticias = () => {
+        const noticiasSalvas = JSON.parse(localStorage.getItem("noticias")) || [];
+        noticiasSalvas.forEach(({ titulo, conteudo }) => {
+            criarNoticia(titulo, conteudo, false);
+        });
+    };
+
+    const salvarNoticias = () => {
+        const noticias = Array.from(listaNoticias.children).map((noticiaCard) => ({
+            titulo: noticiaCard.querySelector(".noticia-header").textContent,
+            conteudo: noticiaCard.querySelector(".noticia-content").textContent,
+        }));
+        localStorage.setItem("noticias", JSON.stringify(noticias));
+    };
+
+    const criarNoticia = (titulo, conteudo, salvar = true) => {
+        const noticiaCard = document.createElement("div");
+        noticiaCard.classList.add("noticia-card");
+
+        noticiaCard.innerHTML = `
+            <div class="noticia-header">${titulo}</div>
+            <div class="noticia-content">${conteudo}</div>
+            <a class="remover-noticia">Remover Notícia</a>
+        `;
+
+        noticiaCard.querySelector(".remover-noticia").addEventListener("click", () => {
+            listaNoticias.removeChild(noticiaCard);
+            salvarNoticias();
+        });
+
+        listaNoticias.appendChild(noticiaCard);
+
+        if (salvar) salvarNoticias();
+    };
+
+    formNoticia.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const titulo = document.getElementById("titulo-noticia").value;
+        const conteudo = document.getElementById("conteudo-noticia").value;
+
+        if (titulo && conteudo) {
+            criarNoticia(titulo, conteudo);
+            formNoticia.reset();
+        } else {
+            alert("Por favor, preencha todos os campos.");
+        }
+    });
+
+    carregarNoticias();
+});
+
+</script>
+
+
+</body>
+</html>
